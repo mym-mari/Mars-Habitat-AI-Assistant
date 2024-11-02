@@ -94,4 +94,9 @@ class ai_mars: #class ai, monitors the data, it saves it each timestep into a cs
 data1 = ai_mars(max_value = 4.0, variable = 'temperature', filename = 'temperature_results', position = 2, model_type = 'forest', n_estimators= 200)
 data1.storing_data()
 data1.plotting()
-
+data2 = ai_mars(max_value = 3.9, variable = 'oxygen', filename = 'oxygen_results', position= 3, model_type= 'forest', n_estimators= 200)
+data2.storing_data()
+data2.plotting()
+data3 = ai_mars(max_value = 0.06, variable = 'energy', filename = 'energy_results', position = 4, model_type = 'forest', n_estimators= 200)
+data3.storing_data()
+data3.plotting()
