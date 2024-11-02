@@ -10,6 +10,9 @@ IMPORTING_INTERVAL = 10
 #variable  = nombre de la variable a monitorear
 #position  = posicion de la variable a monitorear
 #filename = una variable tipo string
+#max_value = valor máximo que tomaría la variable para que retorne una advertencia
+#n_estimators = parámetro para un modelo
+#model_type = modelo predictivo
 
 class ai_mars: #class ai, monitors the data, it saves it each timestep into a csv file and predicts new data
     def __init__(self, max_value, variable, filename, position, model_type, n_estimators):
@@ -41,19 +44,19 @@ class ai_mars: #class ai, monitors the data, it saves it each timestep into a cs
            new_row = pd.DataFrame([[fila['time'], fila[self.variable]]], columns=['time', self.variable]) #creates a new row, of a dataframe with the analyzed values
            self.df_results = pd.concat([self.df_results, new_row], ignore_index=True) #adds the row to the empty array
            
-           #ADDING A PREDICTIVE MODEL ai helped with the aproximation
+           #ADDING A PREDICTIVE MODEL ai helped with the aproximation, can either choose a linear model or a forest model
            if self.model_type == 'forest':
                self.model = RandomForestRegressor(n_estimators=self.n_estimators, random_state=42) #calls a function of random forests
            else:    
                self.model = LinearRegression() #calls a function of linear regression
           
            
-           
+           #trains both models 
            X = self.df_variable['time'].values.reshape(-1, 1)
            y = self.df_variable[self.variable].values
            self.model.fit(X, y)
            
-           #addind the information to the arrays
+           #predicts for next time
            next_time = fila['time'] + 0.01  
            prediction = self.model.predict(np.array([[next_time]]))[0]
            self.predictions.append(prediction) 
@@ -61,23 +64,22 @@ class ai_mars: #class ai, monitors the data, it saves it each timestep into a cs
            
            
            print(new_row)
-           print(f"Predicción para el tiempo {next_time}: {prediction}")
+           print(f"Prediction for time {next_time}: {prediction}")
            
+           #Converts the df.results into a csv file and exports it one the timestep has passed
            if time.time() - last_saved_time >= IMPORTING_INTERVAL:
                 self.df_results.to_csv(self.filename, index=False)
                 print(f'Partial results saved to {self.filename} at interval')
                 last_saved_time = time.time() 
                 
            time.sleep(INTERVAL)
-           self.df_results.to_csv(self.filename, index=False)
            print(self.df_results)
            
-       self.df_results.to_csv(self.filename, index=False) 
        print(self.df_results)
        self.plotting()
        
             
-    def plotting(self):
+    def plotting(self): #plots both things (the original data and the predictions) in the same graphic
        plt.figure(figsize=(10, 5))
        plt.plot(self.df_results['time'], self.df_results[self.variable], label='Actual Data', color='blue')
        plt.plot(self.prediction_times, self.predictions, label='Predicted Data', color='orange', linestyle='--')
@@ -91,6 +93,5 @@ class ai_mars: #class ai, monitors the data, it saves it each timestep into a cs
 
 data1 = ai_mars(max_value = 4.0, variable = 'temperature', filename = 'temperature_results', position = 2, model_type = 'forest', n_estimators= 200)
 data1.storing_data()
-data1.absolute_manual_error()
 data1.plotting()
 
