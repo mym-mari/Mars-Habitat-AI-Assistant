@@ -130,7 +130,7 @@ def logDelay():
         return 0
 
 # Configuration for monitoring variables
-variableMax = [3.5, 3.9, 0.04]  # Maximum allowed values for each variable
+variableMax = [3.5, 3.9, 0.04]  # Maximum allowed values for each variable (thresholds)
 variableNames = ["Temperature", "Oxygen", "Energy"]  # Names of the monitored variables
 variablePosition = [2, 3, 4]  # Positions of the monitored variables in the input data
 outputFilesNames = ["tempResults", "OxResults", "EgyResults"]  # Output file names for results
