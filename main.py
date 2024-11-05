@@ -6,8 +6,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 
 # Constants for logging and reading intervals and file extension
-LOG_INTERVAL = 10  # Time interval in seconds for logging data to CSV
-READ_INTERVAL = 1  # Time interval in seconds for reading new sensor data
+
+LOG_INTERVAL = 20  # Time interval in seconds for logging data to CSV. 
+READ_INTERVAL = 10  # Time interval in seconds for reading new sensor data
+#Change to 3600 if the required logging rate is every 1 hour
+
 FILE_EXTENSION = ".csv"  # File extension for the output files
 
 # Variables to keep track of the last logged and read times
@@ -68,7 +71,9 @@ class ai_mars:
             
     def plotting(self): 
         # Plot actual vs. predicted data for each monitored variable
+        plt.close('all')
         for i in range(len(self.variables)):
+            time.sleep(1)
             plt.figure(figsize=(12, 6))
             
             # Plot actual data
@@ -87,7 +92,9 @@ class ai_mars:
             plt.legend()  # Show legend
             plt.grid(True)  # Add a grid for better readability
             plt.tight_layout()  # Adjust layout
-            plt.show()  # Show the plot
+            plt.show(block=False)  # Show the plot
+            plt.pause(0.1)
+
 
     def logData(self):
         # Save results DataFrames to CSV files if the logging interval has elapsed
@@ -125,6 +132,7 @@ def logDelay():
     global lastLoggedTime
     if time.time() - lastLoggedTime >= LOG_INTERVAL:
         lastLoggedTime = time.time() 
+        print("Log updated")
         return 1
     else: 
         return 0
@@ -145,9 +153,10 @@ if __name__ == '__main__':
                 run = 0  # Stop running if no more readings are available
                 break
             ai1.storing_data()  # Store the new data
+            ai1.plotting()  # Store the new data
             
         if(logDelay()):  # Check if it's time to log data
             ai1.logData()  # Log data to CSV files
             
     ai1.plotting()  # Plot the results and predictions
-    print("Killed")  # Print message when the program ends
+    print("Data logged in csv files. Have a great day")  # Print message when the program ends
